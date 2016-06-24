@@ -13,7 +13,7 @@ class BBC(BaseFeedBook):
     page_encoding         = "utf-8"
     mastheadfile          = "mh_BBC.gif"
     coverfile             = "cv_BBC.jpg"
-	deliver_times         = [8,11,18]
+    deliver_times         = [8,11,18]
     oldest_article        = 1
     
     feeds = [

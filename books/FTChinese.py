@@ -17,6 +17,7 @@ class FTChinese(BaseFeedBook):
     
     feeds = [
             (u'每日新闻', 'http://www.ftchinese.com/rss/feed'),
+            (u'路透：中国财经', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FchinaNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
             ]
     
     def fetcharticle(self, url, opener, decoder):

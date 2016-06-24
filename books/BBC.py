@@ -11,19 +11,16 @@ from config import SHARE_FUCK_GFW_SRV
 def getBook():
     return tech
 
-class tech(BaseFeedBook):
-    title                 = u'席成日报'
-    __author__            = 'calibre'
-    description           = u'每日新闻、英语学习!'
+class BBC(BaseFeedBook):
+    title                 = u'BBC新闻'
+    description           = u'BBC新闻。'
     language              = 'zh-cn'
     feed_encoding         = "utf-8"
     page_encoding         = "utf-8"
-    mastheadfile          = "mh_xcnews.gif"
-    coverfile             = "cv_xcnews.jpg"
-    network_timeout       = 90
+    mastheadfile          = "mh_BBC.gif"
+    coverfile             = "cv_BBC.jpg"
+	deliver_times         = [8,11,18]
     oldest_article        = 1
-    max_articles_per_feed = 15
-    deliver_days          = []
 
     feeds = [
             (u'腾讯大家', 'http://hanhanone.sinaapp.com/feed/dajia'),

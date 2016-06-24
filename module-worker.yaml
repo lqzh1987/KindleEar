@@ -1,4 +1,4 @@
-application: minenews
+application: lqzh1987
 module: worker
 version: 1
 runtime: python27

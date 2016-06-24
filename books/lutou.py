@@ -28,3 +28,8 @@ class lutou(BaseFeedBook):
         (u'路透：外汇', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcurrenciesNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
         (u'路透：产业', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FindustryNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
             ]
+
+ def fetcharticle(self, url, opener, decoder):
+        #每个URL都增加一个后缀full=y，如果有分页则自动获取全部分页
+        url += '?full=y'
+        return BaseFeedBook.fetcharticle(self,url,opener,decoder)

@@ -1,121 +1,30 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-from bs4 import BeautifulSoup
-from base import BaseFeedBook, URLOpener, string_of_tag
+from base import BaseFeedBook
 
 def getBook():
     return lutou
 
 class lutou(BaseFeedBook):
-    title                 = 'lutou'
-    description           = ''
-    language              = 'zh-CN'
+    title                 = u'è·¯é€ç¤¾'
+    description           = u'è·¯é€ç¤¾æ–°é—»ã€‚'
+    language              = 'zh-cn'
     feed_encoding         = "utf-8"
     page_encoding         = "utf-8"
     mastheadfile          = "mh_lutou.gif"
     coverfile             = "cv_lutou.jpg"
-    deliver_days          = ['']
-    deliver_times = [8,11,18]
-    remove_classes = ['ec-messages',]
-    feeds = [
-        (u'Â·Í¸£ºÖĞ¹ú²Æ¾­', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FchinaNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£ºÉî¶È·ÖÎö', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FCNAnalysesNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£º¹ú¼Ê²Æ¾­', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FCNIntlBizNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£ºÊ±ÊÂÒªÎÅ', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FCNTopGenNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£º²Æ¾­±¨µÀ', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcnBizNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£ºÍ¶×Ê×ÊÑ¶', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcnInvNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£º¹«Ë¾ĞÂÎÅ', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcompanyNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£ºÊĞ³¡±¨µÀ', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcnMktNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£ºÍâ»ã', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcurrenciesNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'Â·Í¸£º²úÒµ', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FindustryNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
-               ]
+	deliver_times         = [8,11,18]
+    oldest_article        = 1
     
-    #ÏÂÃæÊÇÔÚÆäÍøÕ¾»¹Ã»ÓĞÌá¹©RSSÇ°µÄ×¥È¡·½Ê½£¬ÏÖÔÚÒÑ¾­²»ĞèÒªÁË£¬ÒòÎªÖ±½ÓÓĞRSSÔ´ÁË
-    """
     feeds = [
-            ('Index', 'http://www.economist.com/printedition'),
-           ]
-    
-    def ParseFeedUrls(self):
-        #return list like [(section,title,url,desc),..]
-        mainurl = 'http://www.economist.com/printedition'
-        urls = []
-        urladded = set()
-        opener = URLOpener(self.host, timeout=30)
-        result = opener.open(mainurl)
-        if result.status_code != 200:
-            self.log.warn('fetch rss failed:%s'%mainurl)
-            return []
-            
-        content = result.content.decode(self.feed_encoding)
-        soup = BeautifulSoup(content, "lxml")
-        
-        #GAE»ñÈ¡µ½µÄÊÇÒÆ¶¯¶ËÍøÒ³£¬ºÍPC»ñÈ¡µ½µÄÍøÒ³ÓĞĞ©²»Ò»Ñù
-        for section in soup.find_all('section', attrs={'id':lambda x: x and 'section' in x}):
-            h4 = section.find('h4')
-            if h4 is None:
-                self.log.warn('h4 is empty')
-                continue
-            sectitle = string_of_tag(h4).strip()
-            if not sectitle:
-                self.log.warn('h4 string is empty')
-                continue
-            #self.log.info('Found section: %s' % section_title)
-            articles = []
-            subsection = ''
-            for node in section.find_all('article'):
-                subsec = node.find('h5')
-                if subsec:
-                    subsection = string_of_tag(subsec)
-                prefix = (subsection + ': ') if subsection else ''
-                a = node.find('a', attrs={"href":True}, recursive=False)
-                if a:
-                    url = a['href']
-                    if url.startswith(r'/'):
-                        url = 'http://www.economist.com' + url
-                    url += '/print'
-                    title = string_of_tag(a)
-                    if title:
-                        title = prefix + title
-                        #self.log.info('\tFound article:%s' % title)
-                        if url not in urladded:
-                            urls.append((sectitle,title,url,None))
-                            urladded.add(url)
-                            
-        #ÓĞĞ©ÈË»ñÈ¡µ½µÄÊÇPC¶ËÍøÒ³£¬¹ÖÁË£¬ÔÙ·ÖÎöÒ»´ÎPC¶ËÍøÒ³°É  
-        if len(urls) == 0:
-            for section in soup.find_all('div', attrs={'id':lambda x: x and 'section' in x}):
-                h4 = section.find('h4')
-                if h4 is None:
-                    self.log.warn('h4 is empty')
-                    continue
-                sectitle = string_of_tag(h4).strip()
-                if not sectitle:
-                    self.log.warn('h4 string is empty')
-                    continue
-                
-                articles = []
-                subsection = ''
-                for node in section.find_all('div', attrs={'class':'article'}):
-                    subsec = node.previous_sibling
-                    if subsec and subsec.name == 'h5':
-                        subsection = string_of_tag(subsec)
-                    prefix = (subsection + ': ') if subsection else ''
-                    a = node.find('a', attrs={'class':'node-link',"href":True}, recursive=False)
-                    if a:
-                        url = a['href']
-                        if url.startswith(r'/'):
-                            url = 'http://www.economist.com' + url
-                        url += '/print'
-                        title = string_of_tag(a)
-                        if title:
-                            title = prefix + title
-                            #self.log.info('\tFound article:%s' % title)
-                            if url not in urladded:
-                                urls.append((sectitle,title,url,None))
-                                urladded.add(url)
-                                
-        if len(urls) == 0:
-            self.log.warn('len of urls is zero.')
-        return urls
-        """
+        (u'è·¯é€ï¼šä¸­å›½è´¢ç»', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FchinaNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šæ·±åº¦åˆ†æ', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FCNAnalysesNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šå›½é™…è´¢ç»', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FCNIntlBizNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šæ—¶äº‹è¦é—»', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FCNTopGenNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šè´¢ç»æŠ¥é“', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcnBizNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šæŠ•èµ„èµ„è®¯', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcnInvNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šå…¬å¸æ–°é—»', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcompanyNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šå¸‚åœºæŠ¥é“', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcnMktNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šå¤–æ±‡', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FcurrenciesNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'è·¯é€ï¼šäº§ä¸š', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FindustryNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
+            ]

@@ -1,116 +1,25 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-from bs4 import BeautifulSoup
-from base import BaseFeedBook, URLOpener, string_of_tag
+from base import BaseFeedBook
 
 def getBook():
     return BBC
 
 class BBC(BaseFeedBook):
-    title                 = 'BBC'
-    description           = ''
-    language              = 'zh-Hans'
+    title                 = u'BBCÊñ∞Èóª'
+    description           = u'BBCÊñ∞Èóª„ÄÇ'
+    language              = 'zh-cn'
     feed_encoding         = "utf-8"
     page_encoding         = "utf-8"
     mastheadfile          = "mh_BBC.gif"
     coverfile             = "cv_BBC.jpg"
-    deliver_days          = ['']
-    deliver_times = [8,11,18]
-    remove_classes = ['ec-messages',]
-    feeds = [
-	    (u'BBC£∫–¬Œ≈÷˜“≥', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'BBC£∫π˙º –¬Œ≈', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Fworld%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'BBC£∫Ω»⁄≤∆æ≠', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Fbusiness%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'BBC£∫ø∆ººΩ°øµ', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Fscience%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
-        (u'BBC£∫ÕººØ', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Ftopics%2Fpicture_gallery%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
-                               ]
+	deliver_times         = [8,11,18]
+    oldest_article        = 1
     
-    #œ¬√Ê «‘⁄∆‰Õ¯’æªπ√ª”–Ã·π©RSS«∞µƒ◊•»°∑Ω Ω£¨œ÷‘⁄“—æ≠≤ª–Ë“™¡À£¨“ÚŒ™÷±Ω””–RSS‘¥¡À
-    """
     feeds = [
-            ('Index', 'http://www.economist.com/printedition'),
-           ]
-    
-    def ParseFeedUrls(self):
-        #return list like [(section,title,url,desc),..]
-        mainurl = 'http://www.economist.com/printedition'
-        urls = []
-        urladded = set()
-        opener = URLOpener(self.host, timeout=30)
-        result = opener.open(mainurl)
-        if result.status_code != 200:
-            self.log.warn('fetch rss failed:%s'%mainurl)
-            return []
-            
-        content = result.content.decode(self.feed_encoding)
-        soup = BeautifulSoup(content, "lxml")
-        
-        #GAEªÒ»°µΩµƒ «“∆∂Ø∂ÀÕ¯“≥£¨∫ÕPCªÒ»°µΩµƒÕ¯“≥”––©≤ª“ª—˘
-        for section in soup.find_all('section', attrs={'id':lambda x: x and 'section' in x}):
-            h4 = section.find('h4')
-            if h4 is None:
-                self.log.warn('h4 is empty')
-                continue
-            sectitle = string_of_tag(h4).strip()
-            if not sectitle:
-                self.log.warn('h4 string is empty')
-                continue
-            #self.log.info('Found section: %s' % section_title)
-            articles = []
-            subsection = ''
-            for node in section.find_all('article'):
-                subsec = node.find('h5')
-                if subsec:
-                    subsection = string_of_tag(subsec)
-                prefix = (subsection + ': ') if subsection else ''
-                a = node.find('a', attrs={"href":True}, recursive=False)
-                if a:
-                    url = a['href']
-                    if url.startswith(r'/'):
-                        url = 'http://www.economist.com' + url
-                    url += '/print'
-                    title = string_of_tag(a)
-                    if title:
-                        title = prefix + title
-                        #self.log.info('\tFound article:%s' % title)
-                        if url not in urladded:
-                            urls.append((sectitle,title,url,None))
-                            urladded.add(url)
-                            
-        #”––©»ÀªÒ»°µΩµƒ «PC∂ÀÕ¯“≥£¨π÷¡À£¨‘Ÿ∑÷Œˆ“ª¥ŒPC∂ÀÕ¯“≥∞…  
-        if len(urls) == 0:
-            for section in soup.find_all('div', attrs={'id':lambda x: x and 'section' in x}):
-                h4 = section.find('h4')
-                if h4 is None:
-                    self.log.warn('h4 is empty')
-                    continue
-                sectitle = string_of_tag(h4).strip()
-                if not sectitle:
-                    self.log.warn('h4 string is empty')
-                    continue
-                
-                articles = []
-                subsection = ''
-                for node in section.find_all('div', attrs={'class':'article'}):
-                    subsec = node.previous_sibling
-                    if subsec and subsec.name == 'h5':
-                        subsection = string_of_tag(subsec)
-                    prefix = (subsection + ': ') if subsection else ''
-                    a = node.find('a', attrs={'class':'node-link',"href":True}, recursive=False)
-                    if a:
-                        url = a['href']
-                        if url.startswith(r'/'):
-                            url = 'http://www.economist.com' + url
-                        url += '/print'
-                        title = string_of_tag(a)
-                        if title:
-                            title = prefix + title
-                            #self.log.info('\tFound article:%s' % title)
-                            if url not in urladded:
-                                urls.append((sectitle,title,url,None))
-                                urladded.add(url)
-                                
-        if len(urls) == 0:
-            self.log.warn('len of urls is zero.')
-        return urls
-        """
+        (u'BBCÔºöÊñ∞Èóª‰∏ªÈ°µ', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'BBCÔºöÂõΩÈôÖÊñ∞Èóª', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Fworld%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'BBCÔºöÈáëËûçË¥¢Áªè', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Fbusiness%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'BBCÔºöÁßëÊäÄÂÅ•Â∫∑', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Fscience%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
+        (u'BBCÔºöÂõæÈõÜ', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Ftopics%2Fpicture_gallery%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
+            ]

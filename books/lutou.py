@@ -13,7 +13,7 @@ class lutou(BaseFeedBook):
     page_encoding         = "utf-8"
     mastheadfile          = "mh_lutou.gif"
     coverfile             = "cv_lutou.jpg"
-	deliver_times         = [8,11,18]
+    deliver_times         = [8,11,18]
     oldest_article        = 1
     
     feeds = [
@@ -29,7 +29,4 @@ class lutou(BaseFeedBook):
         (u'路透：产业', 'http://lqzh.esy.es/makefulltextfeed.php?url=cn.reuters.com%2FrssFeed%2FindustryNews%2F&max=50&links=preserve&exc=&submit=Create+Feed'),
             ]
 
- def fetcharticle(self, url, opener, decoder):
-        #每个URL都增加一个后缀full=y，如果有分页则自动获取全部分页
-        url += '?full=y'
-        return BaseFeedBook.fetcharticle(self,url,opener,decoder)
+ 

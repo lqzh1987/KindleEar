@@ -23,3 +23,7 @@ class BBC(BaseFeedBook):
         (u'BBC：科技健康', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Fscience%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
         (u'BBC：图集', 'http://lqzh.esy.es/makefulltextfeed.php?url=feeds.bbci.co.uk%2Fzhongwen%2Fsimp%2Ftopics%2Fpicture_gallery%2Frss.xml&max=50&links=preserve&exc=&submit=Create+Feed'),
             ]
+      def fetcharticle(self, url, opener, decoder):
+        #每个URL都增加一个后缀full=y，如果有分页则自动获取全部分页
+        url += '?full=y'
+        return BaseFeedBook.fetcharticle(self,url,opener,decoder)
